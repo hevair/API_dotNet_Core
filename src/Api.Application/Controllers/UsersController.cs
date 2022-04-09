@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Api.Domain.DTOs;
 using Api.Domain.Entities;
 using Api.Domain.Interface.Services.User;
 using Microsoft.AspNetCore.Authorization;
@@ -23,7 +24,7 @@ namespace Api.Application.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(UserEntity), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<UserEntity>> GetAll(){
+        public async Task<ActionResult<UserDTO>> GetAll(){
 
             if(!ModelState.IsValid){
                 return BadRequest();
@@ -34,7 +35,7 @@ namespace Api.Application.Controllers
 
         [HttpGet]
         [Route("{id}",Name = "Get")]
-        public async Task<ActionResult<UserEntity>> Get(Guid id){
+        public async Task<ActionResult<UserDTO>> Get(Guid id){
             if(!ModelState.IsValid){
                 return BadRequest();
             }
@@ -51,12 +52,11 @@ namespace Api.Application.Controllers
         [HttpPost]
         [Route("user",Name ="Create")]
         [ProducesResponseType(typeof(UserEntity), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<UserEntity>> Create( [FromBody] UserEntity user){
+        public async Task<ActionResult<UserDTO>> Create( [FromBody] UserDTOCreate user){
             if(!ModelState.IsValid){
                 return BadRequest();
             }
-
-           
+   
             var result = await _userService.Post(user);
 
             

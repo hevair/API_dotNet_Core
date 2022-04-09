@@ -16,6 +16,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using System.Collections.Generic;
+using Api.CrossCutting.Mappings;
+using AutoMapper;
 
 namespace application
 {
@@ -33,11 +35,21 @@ namespace application
         {
             // Add framework services.
             services.AddDbContext<MyContext>(options =>
-            options.UseMySql(Configuration.GetValue<string>("ConnectionStrings:MySqlDB")
-                        ,ServerVersion.AutoDetect(Configuration.GetValue<string>("ConnectionStrings:MySqlDB"))));
+            options.UseSqlServer(Configuration.GetValue<string>("ConnectionStrings:SqlServer")));
 
+            
             ConfigureService.ConfigureDependenciesService(services);
              
+            var config = new AutoMapper.MapperConfiguration(cfg =>{
+                cfg.AddProfile(new DtoToModelProfile());
+                cfg.AddProfile(new EntityToDTOProfile());
+                cfg.AddProfile(new ModelToEntityProfile());
+
+            });
+
+            IMapper mapper = config.CreateMapper();
+            services.AddSingleton(mapper); 
+
             var signingConfigurations = new SigningConfigurations();
             services.AddSingleton(signingConfigurations);
 
